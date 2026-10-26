@@ -1,0 +1,11 @@
+import { Link } from 'react-router-dom';
+import { Check, ArrowUpRight, Sprout } from 'lucide-react';
+import { useDictionary } from '@/hooks/useDictionary';
+import { dailyEntries, dayKey } from '@/lib/search';
+import Quiz from '@/components/features/Quiz';
+import EmptyState from '@/components/features/EmptyState';
+import VerificationBadge from '@/components/features/VerificationBadge';
+export default function Learn() {
+ const { entries, personal, markLearned } = useDictionary(); const daily = dailyEntries(entries); const learned = personal.learned[dayKey()] ?? []; const count = daily.filter(e => learned.includes(e.entry_id)).length;
+ return <div className="page-enter"><p className="eyebrow flex items-center gap-2 text-primary"><Sprout size={16} /> Small steps, every day</p><h1 className="mb-3 mt-3 font-display text-4xl font-semibold">Grow your vocabulary</h1><p className="mb-8 text-muted-foreground">A few words today. More confidence tomorrow.</p><div className="grid items-start gap-8 lg:grid-cols-[1fr_1.2fr]"><section><div className="mb-5 flex items-center justify-between"><h2 className="section-title">Today's five words</h2><span className="text-sm text-primary">{count} / {daily.length} explored</span></div>{daily.length ? <div className="panel divide-y px-5">{daily.map(e => <div className="flex items-center gap-4 py-5" key={e.entry_id}><button className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${learned.includes(e.entry_id) ? 'border-primary bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-secondary'}`} onClick={() => markLearned(e.entry_id)} aria-label={`Mark ${e.english} ${learned.includes(e.entry_id) ? 'unexplored' : 'explored'}`} aria-pressed={learned.includes(e.entry_id)}><Check size={18} /></button><Link to={`/word/${e.entry_id}`} className="flex min-h-11 flex-1 items-center justify-between gap-3"><div><h3 className="font-semibold">{e.english}</h3><p className="mb-2 mt-1 text-xs text-muted-foreground">{e.roman_balochi}</p><VerificationBadge status={e.verification_status} /></div><ArrowUpRight size={17} className="shrink-0 text-muted-foreground" /></Link></div>)}</div> : <EmptyState title="Ready when you are" message="Import a dataset to start your daily learning list." action />}</section><Quiz /></div></div>;
+}

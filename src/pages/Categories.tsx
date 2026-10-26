@@ -1,0 +1,2 @@
+import CategoryGrid from '@/components/features/CategoryGrid';
+export default function Categories() { return <div className="page-enter"><p className="eyebrow text-primary">A word for every part of life</p><h1 className="mb-3 mt-3 font-display text-4xl font-semibold">Explore categories</h1><p className="mb-8 text-muted-foreground">Follow your curiosity, one subject at a time. Empty categories are ready for your next dataset.</p><CategoryGrid /></div>; }

@@ -1,0 +1,2 @@
+import { Link } from 'react-router-dom';
+export default function NotFound() { return <div className="py-20 text-center"><p className="eyebrow text-primary">404</p><h1 className="my-4 font-display text-4xl font-semibold">This page is not in the dictionary</h1><p className="mb-6 text-muted-foreground">Return to your words and keep exploring.</p><Link to="/" className="btn-secondary">Back to dictionary</Link></div>; }

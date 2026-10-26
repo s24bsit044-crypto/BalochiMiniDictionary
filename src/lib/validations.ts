@@ -1,0 +1,5 @@
+import { z } from 'zod';
+export const entrySchema = z.object({
+ entry_id: z.string().trim().min(1).max(128).regex(/^[\p{L}\p{N}_.:-]+$/u, 'Invalid entry ID'),
+ balochi_native: z.string().trim().min(1).max(1000), urdu: z.string().trim().min(1).max(1000), english: z.string().trim().min(1).max(1000), roman_balochi: z.string().trim().min(1).max(1000), roman_balochi_alternatives: z.string().max(2000), category: z.string().trim().min(1).max(200), notes: z.string().max(10000), source: z.string().max(2000), verification_status: z.enum(['needs review', 'verified', 'rejected']), dialect: z.string().max(1000).optional(), example_balochi: z.string().max(5000).optional(), example_urdu: z.string().max(5000).optional(), example_english: z.string().max(5000).optional(), example_roman: z.string().max(5000).optional(), example_source: z.string().max(2000).optional()
+}).refine(e => e.verification_status !== 'verified' || e.source.trim().length > 0, { message: 'Verified entries require a source', path: ['source'] });

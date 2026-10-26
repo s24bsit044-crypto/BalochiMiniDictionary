@@ -1,0 +1,7 @@
+import { History, ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useDictionary } from '@/hooks/useDictionary';
+export default function RecentWords() {
+ const { entries, personal, clearRecent } = useDictionary(); const recent = personal.recent.map(id => entries.find(e => e.entry_id === id)).filter(e => !!e && e.verification_status !== 'rejected').slice(0, 4);
+ return <section><div className="mb-4 flex items-center justify-between"><h2 className="flex items-center gap-2 text-lg font-semibold"><History size={19} className="text-muted-foreground" /> Recently explored</h2>{recent.length > 0 && <button className="min-h-11 px-2 text-xs text-muted-foreground hover:text-primary" onClick={clearRecent}>Clear</button>}</div>{recent.length ? <div className="panel divide-y px-5">{recent.map(e => e && <Link key={e.entry_id} to={`/word/${e.entry_id}`} className="flex min-h-20 items-center justify-between gap-2 py-3"><span><strong className="block text-sm font-medium">{e.english}</strong><span className="text-xs text-muted-foreground">{e.roman_balochi}</span></span><span className="arabic ml-auto text-xl" dir="rtl" lang="bal">{e.balochi_native}</span><ArrowUpRight size={15} className="ml-2 shrink-0 text-muted-foreground" /></Link>)}</div> : <div className="panel border-dashed px-6 py-7 text-sm leading-6 text-muted-foreground">Your words leave a little trail. Open a word to find it here next time.</div>}</section>;
+}

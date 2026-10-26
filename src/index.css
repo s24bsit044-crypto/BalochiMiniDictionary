@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+ :root { --background: 45 33% 97%; --foreground: 155 22% 16%; --card: 0 0% 100%; --primary: 155 34% 25%; --primary-foreground: 45 40% 97%; --secondary: 140 18% 93%; --muted: 40 20% 94%; --muted-foreground: 145 7% 40%; --accent: 32 58% 89%; --border: 40 16% 87%; --warning: 27 65% 32%; --warning-soft: 39 80% 94%; --destructive: 0 62% 40%; --ink: 155 30% 13%; --radius: 1rem; }
+ * { @apply border-border; }
+ body { @apply bg-background text-foreground antialiased; margin: 0; font-size: 16px; }
+ button, a, input, select { -webkit-tap-highlight-color: transparent; }
+ button, a { @apply transition-[transform,opacity] duration-200; }
+ button:disabled { @apply cursor-not-allowed opacity-50; }
+ :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 4px; }
+ ::selection { background: hsl(var(--accent)); }
+}
+@layer components {
+ .panel { @apply rounded-2xl border bg-card; }
+ .btn-primary { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 active:scale-[0.98] disabled:opacity-50; }
+ .btn-secondary { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border bg-card px-4 py-2 text-sm font-medium hover:bg-secondary active:scale-[0.98]; }
+ .icon-btn { @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl hover:bg-secondary; }
+ .field { @apply min-h-12 w-full rounded-xl border bg-card px-4 py-3 text-base outline-none focus:ring-2 focus:ring-primary; }
+ .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.16em]; }
+ .section-title { @apply font-display text-2xl font-semibold tracking-tight; }
+ .arabic { font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, serif; line-height: 1.9; }
+ .page-enter { animation: enter 220ms ease-out; }
+}
+@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

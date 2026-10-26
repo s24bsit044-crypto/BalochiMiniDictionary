@@ -1,0 +1,23 @@
+import { useEffect, useState, useRef } from 'react';
+import { Search, X, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useDictionary } from '@/hooks/useDictionary';
+import { searchIndex } from '@/lib/search';
+import type { Language } from '@/types/dictionary';
+interface Props { query: string; onQuery: (query: string) => void; }
+interface SearchForm { query: string; }
+const LANGUAGES: { value: Language; label: string }[] = [{ value: 'all', label: 'All languages' }, { value: 'english', label: 'English' }, { value: 'balochi_native', label: 'Balochi · بلوچی' }, { value: 'urdu', label: 'Urdu · اردو' }, { value: 'roman_balochi', label: 'Roman Balochi' }];
+export default function SearchBar({ query, onQuery }: Props) {
+ const { personal, setLanguage, index } = useDictionary(); const navigate = useNavigate(); const { register, setValue, handleSubmit } = useForm<SearchForm>({ defaultValues: { query } });
+ const [focused, setFocused] = useState(false); const [active, setActive] = useState(-1); const container = useRef<HTMLDivElement>(null);
+ useEffect(() => { setValue('query', query); setActive(-1); }, [query, setValue]);
+ useEffect(() => { const close = (e: PointerEvent) => { if (!container.current?.contains(e.target as Node)) setFocused(false); }; document.addEventListener('pointerdown', close); return () => document.removeEventListener('pointerdown', close); }, []);
+ const suggestions = query.trim() ? searchIndex(index, query, personal.preferences.language).slice(0, 5) : [];
+ const select = (id: string) => { setFocused(false); navigate(`/word/${encodeURIComponent(id)}`); };
+ return <div ref={container} className="relative z-20"><form onSubmit={handleSubmit(() => { setFocused(false); document.getElementById('search-results')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); })} className="panel flex flex-wrap items-center gap-1 p-2 shadow-[0_8px_30px_hsl(var(--foreground)/0.04)]">
+  <label htmlFor="dictionary-search" className="sr-only">Search the dictionary in any language</label><Search size={22} className="ml-3 shrink-0 text-primary" /><input {...register('query')} id="dictionary-search" role="combobox" aria-autocomplete="list" aria-expanded={focused && suggestions.length > 0} aria-controls="search-suggestions" aria-activedescendant={active >= 0 ? `suggestion-${active}` : undefined} autoComplete="off" maxLength={1000} dir="auto" className="min-h-12 min-w-0 flex-1 bg-transparent px-3 text-base outline-none" placeholder="Search a word in any language…" onFocus={() => setFocused(true)} onChange={e => { setValue('query', e.target.value); onQuery(e.target.value); setFocused(true); }} onKeyDown={e => { if (e.key === 'Escape') setFocused(false); if (e.key === 'ArrowDown') { e.preventDefault(); setActive(n => Math.min(n + 1, suggestions.length - 1)); } if (e.key === 'ArrowUp') { e.preventDefault(); setActive(n => Math.max(0, n - 1)); } if (e.key === 'Enter' && active >= 0 && suggestions[active]) { e.preventDefault(); select(suggestions[active].entry_id); } }} />
+  {query && <button type="button" className="icon-btn" aria-label="Clear search" onClick={() => { setValue('query', ''); onQuery(''); }}><X size={18} /></button>}
+  <div className="relative ml-auto mr-1 flex min-h-11 w-full items-center rounded-lg bg-secondary sm:w-auto"><label className="sr-only" htmlFor="search-language">Search language</label><select id="search-language" className="min-h-11 w-full appearance-none rounded-lg bg-transparent py-2 pl-4 pr-9 text-sm font-medium text-primary" value={personal.preferences.language} onChange={e => setLanguage(e.target.value as Language)}>{LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}</select><ChevronDown className="pointer-events-none absolute right-3" size={14} /></div>
+ </form>{focused && suggestions.length > 0 && <ul id="search-suggestions" role="listbox" aria-label="Search suggestions" className="panel absolute inset-x-0 top-full mt-2 overflow-hidden p-2 shadow-lg">{suggestions.map((e, i) => <li key={e.entry_id} id={`suggestion-${i}`} role="option" aria-selected={active === i}><button type="button" className={`flex min-h-14 w-full items-center justify-between rounded-lg px-4 text-left hover:bg-secondary ${active === i ? 'bg-secondary' : ''}`} onClick={() => select(e.entry_id)}><span><strong className="font-medium">{e.english}</strong><span className="ml-3 text-sm text-muted-foreground">{e.roman_balochi}</span></span><span className="flex items-center gap-4"><span className="arabic text-xl" dir="rtl" lang="bal">{e.balochi_native}</span><ArrowUpRight size={16} /></span></button></li>)}</ul>}</div>;
+}
