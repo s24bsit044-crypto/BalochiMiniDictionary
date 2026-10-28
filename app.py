@@ -4,17 +4,8 @@ import random
 import re
 import pandas as pd
 import streamlit as st
-script_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(script_dir, "balochi_dictionary_dataset.csv")
 
-df = pd.read_csv(file_path)
-
-st.set_page_config(
-    page_tittle="Balochi Mini Dictionary",
-    ...
-)
-
-# Page Configuration
+# Page Configuration MUST be the very first Streamlit command called
 st.set_page_config(
     page_title="Balochi Mini Dictionary",
     page_icon="📖",
@@ -99,10 +90,12 @@ def normalize_latin(s):
     return re.sub(r'\s+', ' ', s).strip()
 
 
-# Load Dataset into Session State
+# Load Dataset into Session State safely with relative path resolution
 if "dictionary_data" not in st.session_state:
     try:
-        df = pd.read_csv("balochi_dictionary_dataset.csv")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "balochi_dictionary_dataset.csv")
+        df = pd.read_csv(file_path)
         # Clean column names (strip BOM, quotes, and whitespace)
         df.columns = [c.replace('\ufeff', '').replace('"', '').strip() for c in df.columns]
         st.session_state["dictionary_data"] = df
