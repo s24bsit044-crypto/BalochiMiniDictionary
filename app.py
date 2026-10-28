@@ -1,8 +1,18 @@
+import os
 import json
 import random
 import re
 import pandas as pd
 import streamlit as st
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(script_dir, "balochi_dictionary_dataset.csv")
+
+df = pd.read_csv(file_path)
+
+st.set_page_config(
+    page_tittle="Balochi Mini Dictionary",
+    ...
+)
 
 # Page Configuration
 st.set_page_config(
